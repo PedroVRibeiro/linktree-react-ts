@@ -1,5 +1,5 @@
 import { FaInstagram } from "react-icons/fa";
-import { Social } from "../../components/social";
+import { Social } from "../../components/Social";
 
 export function Home() {
   return (

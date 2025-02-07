@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Input } from "../../components/Input";
 
 export function Login() {
   return (
@@ -11,6 +12,15 @@ export function Login() {
           </span>
         </h1>
       </Link>
+
+      <form className="w-full max-w-x1 flex flex-col px-2">
+        <Input placeholder="Digite seu Email:" />
+        <button
+          type="submit"
+          className="h-9 bg-blue-600 rounded border-0 text-lg font-medium text-white">
+          Acessar
+        </button>
+      </form>
     </div>
   );
 }

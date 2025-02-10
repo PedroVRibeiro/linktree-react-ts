@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Input } from "../../components/Input";
 import { FormEvent, useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../services/firebaseConnection";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -9,7 +11,18 @@ export function Login() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    console.log({ email: email, password: password });
+    if (email === "" || password === "") {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        console.log("LOGIN REALIZADO COM SUCESSO!");
+      })
+      .catch((error) => {
+        console.log("ERRO AO TENTAR O LOGIN: " + error);
+      });
   }
 
   return (

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../../components/Input";
 import { FormEvent, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -7,6 +7,7 @@ import { auth } from "../../services/firebaseConnection";
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -19,6 +20,7 @@ export function Login() {
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
         console.log("LOGIN REALIZADO COM SUCESSO!");
+        navigate("/admin", { replace: true });
       })
       .catch((error) => {
         console.log("ERRO AO TENTAR O LOGIN: " + error);
@@ -38,7 +40,7 @@ export function Login() {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-x1 flex flex-col px-2">
+        className="w-full max-w-xl flex flex-col px-2">
         <Input
           placeholder="Digite seu Email:"
           type="email"
@@ -55,7 +57,7 @@ export function Login() {
 
         <button
           type="submit"
-          className="h-9 bg-blue-600 rounded border-0 text-lg font-medium text-white">
+          className="h-9 bg-blue-600 rounded border-0 text-lg font-medium text-white transition-transform hover:scale-105">
           Acessar
         </button>
       </form>

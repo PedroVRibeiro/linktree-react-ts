@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Header } from "../../components/Header";
 import { FiTrash } from "react-icons/fi";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../services/firebaseConnection";
 
 export function Admin() {
   const [linkNameInput, setLinkNameInput] = useState("");
@@ -9,6 +11,31 @@ export function Admin() {
   const [linkBackgroundColorInput, setLinkBackgroundColorInput] =
     useState("#f1f1f1");
 
+  function handleRegisterLink(e: FormEvent) {
+    e.preventDefault();
+
+    if (linkNameInput === "" || linkURLInput === "") {
+      alert("Por favor, preencha todos os campos!");
+      return;
+    }
+
+    addDoc(collection(db, "links"), {
+      name: linkNameInput,
+      url: linkURLInput,
+      background: linkBackgroundColorInput,
+      textColor: linkTextColorInput,
+      createdAt: new Date(),
+    })
+      .then(() => {
+        setLinkNameInput("");
+        setLinkURLInput("");
+        console.log("Cadastro realizado com sucesso!");
+      })
+      .catch((error) => {
+        console.log("Não foi possível cadastrar o link: " + error);
+      });
+  }
+
   return (
     <div className="flex items-center flex-col min-h-screen pb-7 px-2">
       <Header />
@@ -16,7 +43,9 @@ export function Admin() {
       <label className="text-white font-medium mt-2 mb-2">
         Cadastrar um Link:
       </label>
-      <form className="flex flex-col mt-8 mb-3 w-full max-w-xl">
+      <form
+        className="flex flex-col mt-8 mb-3 w-full max-w-xl"
+        onSubmit={handleRegisterLink}>
         <label className="text-white font-medium mt-2 mb-2">Nome</label>
         <input
           className="bg-white rounded-md"

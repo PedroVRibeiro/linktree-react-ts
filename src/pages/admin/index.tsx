@@ -4,6 +4,8 @@ import { FiTrash } from "react-icons/fi";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
@@ -71,6 +73,11 @@ export function Admin() {
       .catch((error) => {
         console.log("Não foi possível cadastrar o link: " + error);
       });
+  }
+
+  async function handleDeleteLink(id: string) {
+    const link = doc(db, "links", id);
+    await deleteDoc(link);
   }
 
   return (
@@ -162,7 +169,9 @@ export function Admin() {
           }}>
           <p>{link.name}</p>
           <div>
-            <button className="border border-dashed p-1 rounded bg-neutral-900">
+            <button
+              onClick={() => handleDeleteLink(link.id)}
+              className="border border-dashed p-1 rounded bg-neutral-900">
               <FiTrash size={18} color="#FFF" />
             </button>
           </div>

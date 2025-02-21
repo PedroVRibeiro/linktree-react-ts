@@ -1,8 +1,22 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Header } from "../../components/Header";
 import { FiTrash } from "react-icons/fi";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
+
+type LinkProps = {
+  id: string;
+  name: string;
+  url: string;
+  background: string;
+  textColor: string;
+};
 
 export function Admin() {
   const [linkNameInput, setLinkNameInput] = useState("");
@@ -10,6 +24,29 @@ export function Admin() {
   const [linkTextColorInput, setLinkTextColorInput] = useState("#121212");
   const [linkBackgroundColorInput, setLinkBackgroundColorInput] =
     useState("#f1f1f1");
+  const [linksList, setLinksList] = useState<LinkProps[]>([]);
+
+  useEffect(() => {
+    const linksCollection = collection(db, "links");
+    const linksQuery = query(linksCollection, orderBy("createdAt", "asc"));
+
+    const unlisten = onSnapshot(linksQuery, (snapshot) => {
+      let links = [] as LinkProps[];
+
+      snapshot.forEach((item) => {
+        links.push({
+          id: item.id,
+          ...item.data(),
+        } as LinkProps);
+      });
+
+      setLinksList(links);
+    });
+
+    return () => {
+      unlisten();
+    };
+  }, []);
 
   function handleRegisterLink(e: FormEvent) {
     e.preventDefault();
@@ -115,16 +152,22 @@ export function Admin() {
 
       <h2 className="font-bold text-white mb-4 text-2xl">Meus Links</h2>
 
-      <article
-        className="flex items-center justify-between w-11/12 max-w-xl rounded py-3 px-2 mb-2 select-none"
-        style={{ backgroundColor: "#2563EB", color: "#FFF" }}>
-        <p>Placeholder</p>
-        <div>
-          <button className="border border-dashed p-1 rounded bg-neutral-900">
-            <FiTrash size={18} color="#FFF" />
-          </button>
-        </div>
-      </article>
+      {linksList.map((link) => (
+        <article
+          key={link.id}
+          className="flex items-center justify-between w-11/12 max-w-xl rounded py-3 px-2 mb-2 select-none"
+          style={{
+            backgroundColor: link.background,
+            color: link.textColor,
+          }}>
+          <p>{link.name}</p>
+          <div>
+            <button className="border border-dashed p-1 rounded bg-neutral-900">
+              <FiTrash size={18} color="#FFF" />
+            </button>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }

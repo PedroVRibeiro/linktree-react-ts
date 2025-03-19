@@ -4,6 +4,7 @@ import { Login } from "./pages/login";
 import { Admin } from "./pages/admin";
 import { Private } from "./routes/Private";
 import { Networks } from "./pages/networks";
+import { ErrorPage } from "./pages/error";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/social",
-    element: <Networks />,
+    element: (
+      <Private>
+        <Networks />
+      </Private>
+    ),
+  },
+  {
+    path: "*",
+    element: <ErrorPage></ErrorPage>,
   },
 ]);
 
